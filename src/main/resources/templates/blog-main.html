@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>API更新日志</title>
+    <link rel="stylesheet" type="text/css"
+          href="/ace/css/bootstrap.min.css" th:href="@{/ace/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css"
+          href="/ace/css/font-awesome.min.css" th:href="@{/ace/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" type="text/css"
+          href="/ace/css/ace-skins.min.css" th:href="@{/ace/css/ace-skins.min.css}"/>
+    <link rel="stylesheet" href="/ace/css/ace.min.css" th:href="@{/ace/css/ace.min.css}"
+          class="ace-main-stylesheet" id="main-ace-style"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/sweetalert.css}"/>
+    <script src="/ace/js/jquery.1.11.1.min.js" th:src="@{/ace/js/jquery.1.11.1.min.js}"></script>
+    <script src="/ace/js/jquery.dataTables.js" th:src="@{/ace/js/jquery.dataTables.js}"></script>
+    <script src="/ace/js/bootstrap.min.js" th:src="@{/ace/js/bootstrap.min.js}"></script>
+    <script src="/ace/js/jquery.dataTables.bootstrap.js" th:src="@{/ace/js/jquery.dataTables.bootstrap.js}"></script>
+    <script src="/ace/js/ace-extra.min.js" th:src="@{/ace/js/ace-extra.min.js}"></script>
+    <script src="/ace/js/ace-elements.min.js" th:src="@{/ace/js/ace-elements.min.js}"></script>
+    <script src="/ace/js/ace.min.js" th:src="@{/ace/js/ace.min.js}"></script>
+    <script src="/dist/sweetalert.min.js" th:src="@{/dist/sweetalert.min.js}"></script>
+    <script src="/js/config.js" th:src="@{/js/config.js}"></script>
+    <script src="/js/common.js" th:src="@{/js/common.js}"></script>
+    <script src="/js/index.js" th:src="@{/js/index.js}"></script>
+</head>
+<body style="height: 100%; width: 100%; overflow: hidden;background-color:white;">
+<div style="top: 0px; text-align: center; bottom: 0px; width: 100%; height: 100%">
+
+    <!-- 查询条件开始 -->
+    <div class="well well-sm" style="text-align: left;">
+        VOPEN版本号：<input type="text" id="select_version" size="14" placeholder="VOPEN版本号"/>
+
+        &nbsp;&nbsp;
+        <button class="btn btn-sm btn-info" onclick="search()">
+            <i class="ace-icon fa fa-search bigger-110"></i> <span
+                class="bigger-110 no-text-shadow">查找</span>
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-sm btn-info" onclick="clean()">
+            <i class="ace-icon fa fa-search bigger-110"></i>
+            <span class="bigger-110 no-text-shadow">重置</span>
+        </button>
+        <!--&nbsp;&nbsp;
+        <button class="btn btn-sm btn-info" style="margin-top:3px" onclick="openGroup()">
+            <i class="ace-icon fa fa-fire bigger-110"></i> <span
+                class="bigger-110 no-text-shadow">启用</span>
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-sm btn-info" style="margin-top:3px" onclick="closeGroup()">
+            <i class="ace-icon fa fa-fire bigger-110"></i> <span
+                class="bigger-110 no-text-shadow">停用</span>
+        </button>-->
+        &nbsp;&nbsp;
+        <button class="btn btn-sm btn-danger" style="margin-top:3px" onclick="del()">
+            <i class="ace-icon fa fa-fire bigger-110"></i> <span
+                class="bigger-110 no-text-shadow">删除</span>
+        </button>
+        &nbsp;&nbsp;
+        <button class="btn btn-sm btn-success" style="margin-top:3px" data-toggle="modal"
+                onclick="javascript:document.location.href='/back/insert/page'">
+            <i class="ace-icon fa fa-plus bigger-110"></i> <span
+                class="bigger-110 no-text-shadow">新建</span>
+        </button>
+    </div>
+
+    <!-- 查询条件结束 -->
+
+    <!-- 列表显示开始 -->
+    <div class="tab-content" style="width: 100%; padding: 0px;top:58px;bottom:12px;position:absolute;">
+        <table id="dataTable"
+               class="table table-bordered table-striped" width="100%">
+            <thead id="thead">
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+    </div>
+    <!-- 列表显示结束 -->
+</div>
+</body>
+</html>
+
+<script>
+    $(function () {
+        //初始化数据
+        initData();
+    });
+    function initData() {
+        initVal();
+        initGroupTable();
+    }
+    var columns;
+    function initVal() {
+
+        columns = [
+            {
+                "data": "id",
+                "title": "<input id='titleBox' name='titleBox' type='checkbox' onclick='selectAll()'>",
+                "className": "left selected",
+                "visible": true,
+                "width": "2%",
+                "bSortable": false,
+                "render": function (data, type) {
+                    return "<input title='选择'  type='checkbox' value='" + data + "' name='bootstrap_data_table_checkbox'>";
+                }
+            },
+            {
+                "data": "version",
+                "title": "VOPEN版本号",
+                "visible": true,
+                "sDefaultContent": "",
+                "className": "center",
+                "sWidth": "",
+                "sClass": "center",
+                "render": function (data, type, full, meta) {
+                    return "<a href='javaScript:update(\"" + full.id + "\")'>" + data + "</a>";
+                }
+
+            },
+            {
+                "data": "log",
+                "title": "API更新日志信息",
+                "visible": true,
+                "sDefaultContent": "",
+                "sClass": "text-left",
+                "width": "20%"
+            },
+            {
+                "data": "extra",
+                "title": "附加信息",
+                "visible": true,
+                "sDefaultContent": "",
+                "sClass": "text-left"
+            },
+            {
+                "data": "createTime",
+                "title": "发布时间",
+                "visible": true,
+                "sDefaultContent": "",
+                "sClass": "center"
+            },
+            {
+                "data": "updateTime",
+                "title": "更新时间",
+                "visible": true,
+                "sDefaultContent": "",
+                "sClass": "center",
+                "render": function (data, type, full, meta) {
+                    return formatDateTime(data);
+                }
+            },
+        ];
+    }
+
+    function addSearchInfo(aoData) {
+        aoData.push({
+            "name": "params[version]",
+            "value": $("#select_version").val().trim()
+        });
+    }
+
+    function search() {
+        initGroupTable();
+    }
+
+    //清空
+    function clean() {
+        $("#select_name").val('');
+
+        initGroupTable();
+    }
+
+    function selectAll() {
+
+        var checked = $("[name='bootstrap_data_table_checkbox']");
+        if ($("input[name='titleBox']:checked").val() == 'on') {
+            $.each(checked, function (index, obj) {
+                obj.checked = true;
+            })
+        } else {
+            $.each(checked, function (index, obj){
+                obj.checked = false;
+            })
+        }
+    }
+
+    var nowDataTable = null;
+    function initGroupTable() {
+        //清空数据
+        if (nowDataTable != null) {
+            nowDataTable.fnClearTable(0); //清空数据
+            nowDataTable.fnDestroy();
+        }
+        $("#thead").html("");
+        $("#tbody").html("");
+        var tabContent = $(".tab-content").height() - 14 - 58;
+        nowDataTable = $('#dataTable').dataTable({
+            bPaginate: true,        // 是否使用分页器
+            bAutoWidth: false,      //for better responsiveness
+            bProcessing: true,
+            bServerSide: true,
+            bLengthChange: true,    // 每行显示记录数
+            serverSide: true,
+            searching: false,
+            bSort: false,           // 排序
+            bInfo: true,
+            scrollY: tabContent,
+            order: [0, 'asc'],
+            sAjaxSource: "/back/main/params",
+            fnServerData: function (sSource, aoData, fnCallback,errorDeal) {
+                addSearchInfo(aoData);
+                doGridPost(sSource, aoData, fnCallback,errorDeal);
+            },
+            columns: columns
+        });
+    }
+
+    /*function openGroup(){
+
+        var str = document.getElementsByName("bootstrap_data_table_checkbox");
+        var chestr =[];
+        for (var i=0;i<str.length;i++){
+
+            if (str[i].checked == true) {
+                var s = str[i].value;
+                chestr.push(s);
+            }
+        }
+        if (chestr == "") {
+            sweetAlert("Oops...", "请选择一条数据!", "error");
+        } else {
+            $.post('../log/updateEnable', {ids: chestr, enable: "1"}, function (result) {
+                if (result.error) {
+                    sweetAlert("Oops...", "操作失败!", "error");
+                } else {
+                    swal("Good job!", "操作成功！", "success");
+                    search();
+                }
+            });
+        }
+
+    }
+
+    function closeGroup() {
+
+        var str = document.getElementsByName("bootstrap_data_table_checkbox");
+        var chestr =[];
+        for (var i=0;i<str.length;i++){
+
+            if (str[i].checked == true) {
+                var s = str[i].value;
+                chestr.push(s);
+            }
+        }
+        if (chestr == "") {
+            sweetAlert("Oops...", "请选择一条数据!", "error");
+        } else {
+            console.log(chestr);
+            $.post('../api/updateEnable', {ids: chestr, enable: "0"}, function (result) {
+                if (result.error) {
+                    sweetAlert("Oops...", "操作失败!", "error");
+                } else {
+                    swal("Good job!", "操作成功！", "success");
+                    search();
+                }
+            });
+        }
+    }*/
+
+    function del() {
+
+        var str = document.getElementsByName("bootstrap_data_table_checkbox");
+        var chestr =[];
+        for (var i=0;i<str.length;i++){
+
+            if (str[i].checked == true) {
+                var s = str[i].value;
+                chestr.push(s);
+            }
+        }
+        if (chestr == "") {
+            sweetAlert("Oops...", "请选择一条数据!", "error");
+        } else {
+            $.post('/back/delete/params', {ids: chestr}, function (result) {
+                if (result.error){
+                    sweetAlert("Oops...", "操作失败!", "error");
+                } else{
+                    swal("Good job!", "操作成功！", "success");
+                    search();
+                }
+            });
+        }
+    }
+
+    function update(data) {
+        javascript:document.location.href = '/back/update/page/?id=' + data;
+    }
+
+</script>

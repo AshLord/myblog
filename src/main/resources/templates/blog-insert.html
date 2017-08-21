@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>新增API日志</title>
+    <link rel="stylesheet" type="text/css"
+          href="/ace/css/bootstrap.min.css" th:href="@{/ace/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css"
+          href="/ace/css/font-awesome.min.css" th:href="@{/ace/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" type="text/css"
+          href="/ace/css/ace-skins.min.css" th:href="@{/ace/css/ace-skins.min.css}"/>
+    <link rel="stylesheet" href="/ace/css/ace.min.css" th:href="@{/ace/css/ace.min.css}"
+          class="ace-main-stylesheet" id="main-ace-style"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/dist/sweetalert.css}"/>
+    <script src="/ace/js/jquery.1.11.1.min.js" th:src="@{/ace/js/jquery.1.11.1.min.js}"></script>
+    <script src="/ace/js/bootstrap.min.js" th:src="@{/ace/js/bootstrap.min.js}"></script>
+    <script src="/ace/js/ace-extra.min.js" th:src="@{/ace/js/ace-extra.min.js}"></script>
+    <script src="/ace/js/ace-elements.min.js" th:src="@{/ace/js/ace-elements.min.js}"></script>
+    <script src="/ace/js/ace.min.js" th:src="@{/ace/js/ace.min.js}"></script>
+    <script src="/dist/sweetalert.min.js" th:src="@{/dist/sweetalert.min.js}"></script>
+    <script src="/js/common/My97DatePicker/WdatePicker.js" th:src="@{/js/common/My97DatePicker/WdatePicker.js}"></script>
+</head>
+<body>
+<div class="main-container" id="main-container">
+    <div class="main-content">
+        <div class="main-content-inner">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>
+                        <a href="main">API更新日志管理</a>
+                        <small><i
+                                class="ace-icon fa fa-angle-double-right"></i> 新增API更新日志
+                        </small>
+                    </h1>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <form class="form-horizontal" role="form" action="/back/insert/params" name="form" id="form_id" method="post">
+
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right">
+                                    <span style="color: red;">*</span>VOPEN版本号:
+                                </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="version" name="version"
+                                           placeholder="请输入VOPEN版本号" class="col-xs-10 col-sm-5"
+                                           maxlength="100"/>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right">
+                                    <span style="color: red;">*</span>API更新日志信息:
+                                </label>
+                                <div class="col-sm-9">
+                                    <textarea class="col-xs-10 col-sm-5" id="log" name="log"
+                                              placeholder="请输入API更新日志信息" maxlength="2000"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right">
+                                    <span style="color: red;">*</span>附加信息:
+                                </label>
+                                <div class="col-sm-9">
+                                    <textarea class="col-xs-10 col-sm-5" id="extra" name="extra"
+                                              placeholder="请输入附加信息" maxlength="2000"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label no-padding-right">
+                                    <span style="color: red;">*</span>日志更新日期:
+                                </label>
+                                <input type="text" id="createTime" name="createTime" placeholder="日志更新日期"
+                                       onfocus="WdatePicker({minDate:'#F{$dp.$D(\'createTime\')}',dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+                            </div>
+
+                            <div class="clearfix form-actions">
+                                <div class="col-md-offset-3 col-md-9">
+                                    <button class="btn btn-info" type="button" id="submit_button">
+                                        <i class="ace-icon fa fa-check bigger-110"></i> 发布
+                                    </button>
+                                    &nbsp;&nbsp;
+
+                                    <button class="btn btn-warning" type="button" id="back_button">
+                                        <i class="ace-icon fa fa-undo bigger-110"></i> 取消
+                                    </button>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+    //验证及发布
+    $("#submit_button").click(function () {
+        //验证
+        var version = $("#version").val();
+        var log = $("#log").val();
+
+        if ($.trim(version) == '') {
+            sweetAlert("Oops...", "version不能为空!", "error");
+            return;
+        }
+        if ($.trim(log) == '') {
+            sweetAlert("Oops...", "log不能为空!", "error");
+            return;
+        }
+
+        //换行转回车
+        var log_text = document.getElementById("log").value;
+        var extra_text = document.getElementById("extra").value;
+
+        log_text = log_text.replace(/\n|\r\n/g,'<br />');
+        extra_text = extra_text.replace(/\n|\r\n/g,'<br />');
+
+        document.getElementById("log").value=log_text;
+        document.getElementById("extra").value=extra_text;
+
+        $("#form_id").submit();
+    });
+
+    $("#back_button").click(function () {
+        history.go(-1);
+    });
+
+</script>
+
+</html>

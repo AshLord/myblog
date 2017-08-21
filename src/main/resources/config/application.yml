@@ -1,0 +1,28 @@
+server:
+  port: 80
+
+spring:
+  freemarker:
+    charset: utf-8
+    suffix: .html
+    settings:
+      template_exception_handler: org.jinyang.blog.web.exception.FreemarkerExceptionHandler
+  jpa:
+    show-sql: false
+    database: MYSQL
+    generate-ddl: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    properties:
+      hibernate:
+        format_sql: false
+        generate_statistics: false
+  datasource:
+      url: jdbc:mysql://${db.host}:${db.port}/vision?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=false
+      username: ${db.username}
+      password: ${db.password}
+---
+spring:
+  profiles: local
+---
+spring:
+  profiles: online
