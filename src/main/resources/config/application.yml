@@ -17,7 +17,7 @@ spring:
         format_sql: false
         generate_statistics: false
   datasource:
-      url: jdbc:mysql://${db.host}:${db.port}/vision?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=false
+      url: jdbc:mysql://${db.host}:${db.port}/jinyang?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&useSSL=false
       username: ${db.username}
       password: ${db.password}
 ---

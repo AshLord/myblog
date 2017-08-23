@@ -27,10 +27,12 @@ import java.util.List;
 @Service
 public class BlogService {
 
-
     @Autowired
     private BlogRepository blogRepository;
 
+    public List<BlogEntity> queryByLabel(String label){
+        return blogRepository.queryByLabel(label);
+    }
     public JPage<BlogEntity> queryAll(PageParams pageParams) {
         Specification<BlogEntity> specification = where(pageParams);
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
